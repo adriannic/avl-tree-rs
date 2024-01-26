@@ -61,13 +61,17 @@ impl AVLTree {
         let balance_factor = left_height - right_height;
 
         if balance_factor < -1 {
-            if value <= self.right.as_ref().unwrap().value {
-                self.right.as_mut().unwrap().right_rotate();
+            if let Some(right) = self.right.as_mut() {
+                if value <= right.value {
+                    right.right_rotate();
+                }
             }
             self.left_rotate();
         } else if balance_factor > 1 {
-            if value > self.left.as_ref().unwrap().value {
-                self.right.as_mut().unwrap().left_rotate();
+            if let Some(left) = self.left.as_mut() {
+                if value <= left.value {
+                    left.right_rotate();
+                }
             }
             self.right_rotate();
         }
