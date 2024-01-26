@@ -44,11 +44,19 @@ impl AVLTree {
         self.height
     }
 
-    fn update_height(&mut self) {
+    fn update_height_recursive(&mut self) {
         let get_height = |branch: &mut Box<AVLTree>| {
-            branch.update_height();
+            branch.update_height_recursive();
             branch.height()
         };
+        let left_height = self.left.as_mut().map_or(-1, get_height);
+        let right_height = self.right.as_mut().map_or(-1, get_height);
+
+        self.height = 1 + i64::max(left_height, right_height);
+    }
+
+    fn update_height(&mut self) {
+        let get_height = |branch: &mut Box<AVLTree>| branch.height;
         let left_height = self.left.as_mut().map_or(-1, get_height);
         let right_height = self.right.as_mut().map_or(-1, get_height);
 
@@ -69,13 +77,13 @@ impl AVLTree {
             self.left_rotate();
         } else if balance_factor > 1 {
             if let Some(left) = self.left.as_mut() {
-                if value <= left.value {
-                    left.right_rotate();
+                if value > left.value {
+                    left.left_rotate();
                 }
             }
             self.right_rotate();
         }
-        self.update_height();
+        self.update_height_recursive();
     }
 
     fn left_rotate(&mut self) {
