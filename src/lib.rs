@@ -47,7 +47,7 @@ impl AVLTree {
     #[inline(always)]
     fn update_height_recursive(&mut self) {
         let get_height = |branch: &mut Box<AVLTree>| {
-            branch.update_height_recursive();
+            branch.update_height();
             branch.height()
         };
         let left_height = self.left.as_mut().map_or(-1, get_height);
