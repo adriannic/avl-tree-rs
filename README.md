@@ -15,3 +15,7 @@ To clean the binary use `cargo clean`.
 ## Usage
 
 To run the program use `cargo run --release` or run `target/release/avl-tree`.
+
+## Benchmark
+
+To run the benchmark use `cargo bench`. The results are in `target/criterion`.
