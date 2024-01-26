@@ -7,6 +7,6 @@ fn main() {
         tree.add_value(i);
     }
 
-    println!("{:?}", tree.get_values());
-    println!("Altura: {}", tree.height());
+    println!("{} elements", tree.get_values().last().unwrap() + 1);
+    println!("Height: {}", tree.height());
 }
