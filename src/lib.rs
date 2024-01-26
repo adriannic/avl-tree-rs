@@ -83,7 +83,6 @@ impl AVLTree {
             }
             self.right_rotate();
         }
-        self.update_height_recursive();
     }
 
     fn left_rotate(&mut self) {
@@ -96,6 +95,7 @@ impl AVLTree {
             left.right = right.left.take();
             self.right = right.right.take();
         }
+        self.update_height_recursive();
     }
 
     fn right_rotate(&mut self) {
@@ -108,6 +108,7 @@ impl AVLTree {
             right.left = left.right.take();
             self.left = left.left.take();
         }
+        self.update_height_recursive();
     }
 
     fn get_values_aux(&self, values: &mut Vec<i64>) {
