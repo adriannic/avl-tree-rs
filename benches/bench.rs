@@ -1,12 +1,20 @@
-use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion};
-use avl_tree::{AVLTree};
+use avl_tree::AVLTree;
+use criterion::{criterion_group, criterion_main, BenchmarkId, Criterion};
 
 fn criterion_benchmark(c: &mut Criterion) {
-    let mut tree = AVLTree::new(0);
-    
     let mut group = c.benchmark_group("benchmark");
-        for i in [50, 500, 5000].iter() {
-            group.bench_function(BenchmarkId::new("bench", i), |b| b.iter(|| tree.add_value(*i)));
+    for i in [50, 500, 5000].iter() {
+        group.bench_function(BenchmarkId::new("bench", i), |b| {
+            b.iter_batched(
+                || AVLTree::new(0),
+                |mut tree| {
+                    for j in 1..*i {
+                        tree.add_value(j);
+                    }
+                },
+                criterion::BatchSize::SmallInput,
+            )
+        });
     }
     group.finish();
 }
