@@ -45,16 +45,12 @@ impl AVLTree {
     }
 
     fn update_height(&mut self) {
-        let mut left_height = -1;
-        let mut right_height = -1;
-        if let Some(left) = self.left.as_mut() {
-            left.update_height();
-            left_height = left.height();
-        }
-        if let Some(right) = self.right.as_mut() {
-            right.update_height();
-            right_height = right.height();
-        }
+        let get_height = |branch: &mut Box<AVLTree>| {
+            branch.update_height();
+            branch.height()
+        };
+        let left_height = self.left.as_mut().map_or(-1, get_height);
+        let right_height = self.right.as_mut().map_or(-1, get_height);
 
         self.height = 1 + i64::max(left_height, right_height);
     }
