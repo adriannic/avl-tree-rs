@@ -1,5 +1,3 @@
-use std::mem;
-
 pub struct AVLTree {
     left: Option<Box<AVLTree>>,
     right: Option<Box<AVLTree>>,
@@ -44,6 +42,7 @@ impl AVLTree {
         self.height
     }
 
+    #[inline(always)]
     fn update_height_recursive(&mut self) {
         let get_height = |branch: &mut Box<AVLTree>| {
             branch.update_height();
@@ -55,6 +54,7 @@ impl AVLTree {
         self.height = 1 + i64::max(left_height, right_height);
     }
 
+    #[inline(always)]
     fn update_height(&mut self) {
         let get_height = |branch: &mut Box<AVLTree>| branch.height;
         let left_height = self.left.as_mut().map_or(-1, get_height);
@@ -88,24 +88,26 @@ impl AVLTree {
 
     fn left_rotate(&mut self) {
         let mut new_left = Box::new(AVLTree::new(self.value));
-        new_left.left = mem::take(&mut self.left);
+        new_left.left = self.left.take();
         self.left = Some(new_left);
-        let left = self.left.as_mut().unwrap();
-        let right = self.right.as_mut().unwrap();
-        self.value = right.value;
-        left.right = mem::take(&mut right.left);
-        self.right = mem::take(&mut right.right);
+
+        if let (Some(left), Some(right)) = (self.left.as_mut(), self.right.as_mut()) {
+            self.value = right.value;
+            left.right = right.left.take();
+            self.right = right.right.take();
+        }
     }
 
     fn right_rotate(&mut self) {
         let mut new_right = Box::new(AVLTree::new(self.value));
-        new_right.right = mem::take(&mut self.right);
+        new_right.right = self.right.take();
         self.right = Some(new_right);
-        let right = self.right.as_mut().unwrap();
-        let left = self.left.as_mut().unwrap();
-        self.value = left.value;
-        right.left = mem::take(&mut left.right);
-        self.left = mem::take(&mut left.left);
+
+        if let (Some(right), Some(left)) = (self.right.as_mut(), self.left.as_mut()) {
+            self.value = left.value;
+            right.left = left.right.take();
+            self.left = left.left.take();
+        }
     }
 
     fn get_values_aux(&self, values: &mut Vec<i64>) {
